@@ -16,7 +16,7 @@ export default function TravelApp() {
   // লাইভ জিপিএস ট্র্যাকিং সিস্টেম
   useEffect(() => {
     let watchId;
-    if (tracking && 'geolocation' in navigator) {
+    if (tracking && typeof window !== 'undefined' && 'geolocation' in navigator) {
       watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -26,7 +26,7 @@ export default function TravelApp() {
           setTripHistory((prev) => [...prev, newPoint]);
           
           if (tripHistory.length > 0) {
-            setDistance((prev) => prev + 0.05); // সিমুলেটেড বা দূরত্ব ট্র্যাকিং
+            setDistance((prev) => prev + 0.05);
           }
         },
         (error) => {
@@ -37,7 +37,9 @@ export default function TravelApp() {
       );
     }
     return () => {
-      if (watchId) navigator.geolocation.clearWatch(watchId);
+      if (watchId && typeof window !== 'undefined' && 'geolocation' in navigator) {
+        navigator.geolocation.clearWatch(watchId);
+      }
     };
   }, [tracking]);
 
@@ -103,7 +105,7 @@ export default function TravelApp() {
       id: 7,
       cat: 'wellness',
       title: 'প্রকৃতির কাছে যাওয়া (Nature Retreat)',
-      desc: 'সমুদ্রসৈকত, চা-বাগান, পাহাড়ি বোন বা শান্ত লেকের পাশে বসে রিল্যাক্স করা ও মানসিক প্রশান্তি লাভ।',
+      desc: 'সমুদ্রসৈকত, চা-বাগান, পাহাড়ি বন বা শান্ত লেকের পাশে বসে রিল্যাক্স করা ও মানসিক প্রশান্তি লাভ।',
       icon: Heart,
       tag: 'প্রশান্তি'
     },
@@ -143,7 +145,7 @@ export default function TravelApp() {
       <header className="bg-slate-800/80 backdrop-blur sticky top-0 z-50 border-b border-slate-700 px-4 py-4">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Navigation className="w-7 h-7 text-emerald-400 animate-pulse" />
+            <Navigation className="w-7 h-7 text-emerald-400 animate-pulse"/>
             <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
               জীবন ও ট্রাভেল হাব
             </h1>
@@ -156,7 +158,7 @@ export default function TravelApp() {
                 : 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold shadow-lg shadow-emerald-500/20'
             }`}
           >
-            <MapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4"/>
             {tracking ? 'ট্র্যাকিং বন্ধ করুন' : 'লাইভ ট্র্যাকিং শুরু'}
           </button>
         </div>
@@ -193,7 +195,7 @@ export default function TravelApp() {
             {tripHistory.length > 0 && (
               <div className="pt-2 border-t border-slate-700/60">
                 <p className="text-xs text-slate-400 mb-2">সাম্প্রতিক লোকেশন পয়েন্টসমূহ:</p>
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                <div className="flex gap-2 overflow-x-auto pb-2">
                   {tripHistory.slice(-5).reverse().map((pt, idx) => (
                     <span key={idx} className="bg-slate-900 text-xs text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap">
                       ⏰ {pt.time} — {pt.lat.toFixed(3)}, {pt.lng.toFixed(3)}
@@ -206,7 +208,7 @@ export default function TravelApp() {
         )}
 
         {/* ফিল্টার ট্যাব */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex gap-2 overflow-x-auto pb-2">
           {categories.map((cat) => (
             <button
               key={cat.id}
@@ -229,12 +231,12 @@ export default function TravelApp() {
             return (
               <div 
                 key={act.id} 
-                className="bg-slate-800/90 rounded-2xl p-5 border border-slate-700 hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between group"
+                className="bg-slate-800/90 rounded-2xl p-5 border border-slate-700 hover:border-emerald-500/50 transition-all duration-300 shadow-lg flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
                     <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all">
-                      <IconComp className="w-6 h-6" />
+                      <IconComp className="w-6 h-6"/>
                     </div>
                     <span className="text-xs px-2.5 py-1 rounded-full bg-slate-700/60 text-slate-300 border border-slate-600">
                       {act.tag}
@@ -250,7 +252,7 @@ export default function TravelApp() {
 
                 <div className="pt-3 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-400">
                   <span className="flex items-center gap-1 hover:text-emerald-400 cursor-pointer">
-                    <Share2 className="w-3.5 h-3.5" /> শেয়ার করুন
+                    <Share2 className="w-3.5 h-3.5"/> শেয়ার করুন
                   </span>
                   <span className="text-emerald-400 font-medium cursor-pointer hover:underline">
                     প্ল্যান করুন &rarr;
@@ -263,5 +265,4 @@ export default function TravelApp() {
       </main>
     </div>
   );
-                }
-        
+}
